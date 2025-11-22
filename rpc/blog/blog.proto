@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package blog;
+
+option go_package = "./blog";
+
+message BaseResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 创建博客
+message CreatePostRequest {
+
+  string title = 1;
+  string content = 2;
+  uint64 user_id = 3;
+}
+
+message CreatePostResponse {
+  BaseResponse base = 1;
+  uint64 post_id = 2;
+}
+
+message GetPostRequest {
+  uint64 post_id = 1;
+}
+
+message GetPostsRequest {
+  int32 page = 1;
+  int32 size = 2;
+}
+
+message GetPostsResponse {
+  BaseResponse base = 1;
+  repeated PostInfo posts = 2;
+  int32 total = 3;
+}
+
+message GetPostResponse {
+  BaseResponse base = 1;
+  PostInfo post = 2;
+}
+
+message UpdatePostRequest {
+  uint64 post_id = 1;
+  uint64 user_id = 2;
+  string title = 3;
+  string content = 4;
+}
+
+message DeletePostRequest {
+  uint64 user_id = 1;
+  uint64 post_id = 2;
+}
+
+message CreateCommentRequest {
+  uint64 user_id = 1;
+  uint64 post_id = 2;
+  string content = 3;
+}
+
+message GetCommentsRequest {
+  uint64 post_id = 1;
+}
+
+message GetCommentsResponse {
+  BaseResponse base = 1;
+  // 表示 comments 字段包含 0个或多个 CommentInfo 对象,类似集合结构
+  repeated CommentInfo comments = 2;
+}
+
+message DeleteCommentRequest {
+  uint64 user_id = 1;
+  uint64 comment_id = 2;
+}
+message PostInfo {
+  uint64 id = 1;
+  string title = 2;
+  string content = 3;
+  uint64 user_id = 4;
+  UserInfo user = 5;
+  string create_at = 6;
+  string update_at = 7;
+}
+
+message UserInfo {
+  uint64 id = 1;
+  string username = 2;
+  string email = 3;
+}
+
+message CommentInfo {
+  uint64 id = 1;
+  string content = 2;
+  uint64 user_id = 3;
+  uint64 post_id = 4;
+  UserInfo user = 5;
+  string created_at = 6;
+}
+
+service BlogService {
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+  rpc GetPost(GetPostRequest) returns (GetPostResponse);
+  rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
+  rpc UpdatePost(UpdatePostRequest) returns (BaseResponse);
+  rpc DeletePost(DeletePostRequest) returns (BaseResponse);
+  rpc CreateComment(CreateCommentRequest) returns (BaseResponse);
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
+  rpc DeleteComment(DeleteCommentRequest) returns (BaseResponse);
+}
