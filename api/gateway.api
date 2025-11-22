@@ -1,2 +1,101 @@
 syntax = "v1"
 
+type (
+	BaseResponse {
+		code    int32       `json:"code"`
+		message string      `json:"message"`
+		Data    interface{} `json:"data,omitempty"`
+	}
+	// 注册
+	RegisterRequest {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	// 登录
+	LoginRequest {
+		Token string   `json:"token"`
+		User  UserInfo `json:"user"`
+	}
+	UserInfo {
+		ID       uint64 `json:"id"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		CreateAt string `json:"create_at"`
+		UpdateAt string `json:"update_at"`
+	}
+	// 创建博客
+	CreatePostRequest {
+		Title   string `json:"title"`
+		Content string `json:"content"`
+	}
+	// 修改博客
+	UpdatePostRequest {
+		Title   string `json:"title,optional"`
+		Content string `json:"content,optional"`
+	}
+	PostInfo {
+		ID       uint64   `json:"id"`
+		Title    string   `json:"title"`
+		Content  string   `json:"content"`
+		UserId   string   `json:"user_id"`
+		User     UserInfo `json:"user"`
+		CreateAt string   `json:"create_at"`
+		UpdateAt string   `json:"update_at"`
+	}
+	// 创建评论
+	CreateCommentRequest {
+		PostId  uint64 `json:"postId"`
+		Content string `json:"content"`
+	}
+	// 评论信息
+	CommentInfo {
+		ID       uint64   `json:"id"`
+		Content  string   `json:"content"`
+		UserId   uint64   `json:"user_id"`
+		PostId   uint64   `json:"postId"`
+		User     UserInfo `json:"user"`
+		CreateAt string   `json:"create_at"`
+	}
+)
+
+@server (
+	jwt:        Auth
+	middleware: AuthMiddleware
+)
+service blog-api {
+	// 创建api
+	@handler Register
+	post /api/auth/register (RegisterRequest) returns (BaseResponse)
+
+	@handler Login
+	post /api/auth/login (LoginRequest) returns (BaseResponse)
+
+	@handler GetPosts
+	get /api/posts returns (BaseResponse)
+
+	@handler GetPost
+	get /api/post/:id returns (BaseResponse)
+
+	@handler GetComments
+	get /api/post/:id/comments returns (BaseResponse)
+
+	@handler getPost
+	post /api/posts (CreatePostRequest) returns (BaseResponse)
+
+	@handler UpdatePost
+	put /api/posts/:id (UpdatePostRequest) returns (BaseResponse)
+
+	@handler DeletePost
+	delete /api/post/:id returns (BaseResponse)
+
+	@handler CreateComment
+	post /api/comments (CreateCommentRequest) returns (BaseResponse)
+
+	@handler DeleteComment
+	delete /api/comments/:id returns (BaseResponse)
+
+	@handler GetProfile
+	get /api/profile returns (BaseResponse)
+}
+

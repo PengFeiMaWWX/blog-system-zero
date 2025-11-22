@@ -1,0 +1,25 @@
+Name: blog-api
+Host: 0.0.0.0
+Port: 8888
+
+Timeout: 30000
+
+Auth:
+  AccessSecret: 123456abcdefg
+  AccessExpire: 86400
+
+UserRpc:
+  Etcd:
+    Hosts:
+      - localhost:2379
+    Key: user.rpc
+
+BlogRpc:
+  Etcd:
+    Hosts:
+      - localhost:2379
+    Key: blog.rpc
+
+Log:
+  Level: info
+  Mode: console
